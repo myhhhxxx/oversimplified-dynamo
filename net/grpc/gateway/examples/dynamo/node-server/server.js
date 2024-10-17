@@ -70,27 +70,6 @@ function doPut(call, callback) {
 }
 
 /**
- * @param {!Object} call
- */
-function doServerStreamingEcho(call) {
-  var senders = [];
-  function sender(message, interval) {
-    return (callback) => {
-      call.write({
-        message: message
-      });
-      _.delay(callback, interval);
-    };
-  }
-  for (var i = 0; i < call.request.message_count; i++) {
-    senders[i] = sender(call.request.message, call.request.message_interval);
-  }
-  async.series(senders, () => {
-    call.end(copyMetadata(call));
-  });
-}
-
-/**
  * Get a new server with the handler functions in this file bound to the
  * methods it serves.
  * @return {!Server} The new server object
