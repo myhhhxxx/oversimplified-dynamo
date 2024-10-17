@@ -5,6 +5,12 @@ services:
       context: ./
       dockerfile: ./net/grpc/gateway/docker/prereqs/Dockerfile
     image: grpcweb/prereqs
+  dynamo-prereqs:
+    build:
+      context: ./
+      dockerfile: ./net/grpc/gateway/docker/dynamo_prereqs/Dockerfile
+    image: dynamo-prereqs:latest
+    platform: linux/amd64
   echo-server:
     build:
       context: ./
@@ -14,6 +20,16 @@ services:
     image: grpcweb/echo-server
     ports:
       - "9090:9090"
+  dynamo-node-server:
+    build:
+      context: ./
+      dockerfile: ./net/grpc/gateway/docker/dynamo_node_server/Dockerfile
+    depends_on:
+      - dynamo-prereqs
+    platform: linux/amd64
+    image: dynamo-node-server
+    ports:
+      - "9090:9090"  
   node-server:
     build:
       context: ./
@@ -39,6 +55,15 @@ services:
       - "8080:8080"
     links:
       - node-server
+  dynamo-envoy:
+    build:
+      context: ./
+      dockerfile: ./net/grpc/gateway/docker/dynamo_envoy/Dockerfile
+    image: dynamo-envoy
+    ports:
+      - "8080:8080"
+    links:
+      - dynamo-node-server
   grpcwebproxy:
     build:
       context: ./
@@ -48,6 +73,16 @@ services:
       - "8080:8080"
     links:
       - node-server
+  dynamo-commonjs-client:
+    build:
+      context: ./
+      dockerfile: ./net/grpc/gateway/docker/dynamo_commonjs_client/Dockerfile
+    depends_on:
+      - dynamo-prereqs
+    image: dynamo-commonjs-client
+    ports:
+      - "8081:8081"
+    platform: linux/amd64
   commonjs-client:
     build:
       context: ./

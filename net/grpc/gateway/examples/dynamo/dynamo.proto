@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package grpc.gateway.dynamo;
+
+message StoredValue {
+  
+}
+
+message PutRequest {
+  int32 key;
+  
+}
+
+message PutResponse {
+
+}
+
+message GetRequest {
+  int32 key;
+}
+
+message GetResponse {
+    
+}
+
+// A simple echo service.
+service DynamoService {
+  // One request followed by one response
+  // The server returns the client message as-is.
+  rpc Put(PutRequest) returns (PutResponse);
+
+  // Sends back abort status.
+  rpc Get(GetRequest) returns (GetResponse);
+}
