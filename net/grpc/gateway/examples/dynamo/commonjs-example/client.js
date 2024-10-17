@@ -16,7 +16,7 @@
  *
  */
 
-const {PutRequest, GetRequest} = require('./dynamo_pb.js');
+const {PutRequest, GetRequest, StoredValue} = require('./dynamo_pb.js');
 const {DynamoServiceClient} = require('./dynamo_grpc_web_pb.js');
 const {DynamoApp} = require('../echoapp.js');
 const grpc = {};
@@ -29,7 +29,8 @@ var dyanmoApp = new DynamoApp(
   dynamoService,
   {
     PutRequest: PutRequest,
-    GetRequest: GetRequest
+    GetRequest: GetRequest,
+    StoredValue: StoredValue,
   }
 );
 

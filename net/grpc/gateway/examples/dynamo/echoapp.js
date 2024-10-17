@@ -55,29 +55,36 @@ dynamoApp.DynamoApp.addRightMessage = function(message) {
   this.addMessage(message, "label-default pull-right");
 };
 
+dynamoApp.DynamoApp.prototype.updatePut = function () {
+  this.key++;
+  this.value = "value" + this.key;
+
+  $("#key").text(this.key);
+  $("#value").text(this.value);
+}
 
 /**
  * @param {Object} e event
  * @return {boolean} status
  */
 dynamoApp.DynamoApp.prototype.put = function(e) {
-  var msg = $("#put-msg").val().trim();
-  $("#put-msg").val(''); // clear the text box
-  if (!msg) return false;
-  
-  dynamoApp.DynamoApp.addLeftMessage(msg);
+  dynamoApp.DynamoApp.addLeftMessage("key:" + this.key + " value:" + this.value);
   var unaryRequest = new this.ctors.PutRequest();
-  unaryRequest.setMessage(msg);
-  var call = this.echoService.echo(unaryRequest,
+  var storedValue = new this.ctors.StoredValue();
+  var self = this;
+  unaryRequest.setKey(self.key);
+  storedValue.setValue(self.value);
+  unaryRequest.setValue(storedValue);
+
+  var call = this.dynamoService.put(unaryRequest,
                                    {"custom-header-1": "value1"},
                                    function(err, response) {
     if (err) {
       dynamoApp.DynamoApp.addRightMessage('Error code: '+err.code+' "'+
                                       err.message+'"');
     } else {
-      setTimeout(function () {
-        dynamoApp.DynamoApp.addRightMessage(response.getMessage());
-      }, dynamoApp.DynamoApp.INTERVAL);
+      dynamoApp.DynamoApp.addRightMessage(response.getCode());
+      self.updatePut();
     }
   });
   call.on('status', function(status) {
@@ -108,6 +115,10 @@ dynamoApp.DynamoApp.prototype.get = function (e) {
  */
 dynamoApp.DynamoApp.prototype.load = function() {
   var self = this;
+  self.key = 0;
+
+  self.updatePut();
+
   $(document).ready(function() {
     // event handlers
     $("#put").click(self.put.bind(self));

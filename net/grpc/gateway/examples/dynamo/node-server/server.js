@@ -62,10 +62,11 @@ function doGet(call, callback) {
  * @param {function():?} callback
  */
 function doPut(call, callback) {
-  callback({
-    code: grpc.status.ABORTED,
-    message: 'Aborted from server side.'
+  console.log('Received Put call:' + call.key);
+  callback(null, {
+    code: dynamo.StatusCode.OK
   });
+  console.log('Sent response.');
 }
 
 /**
@@ -110,6 +111,7 @@ if (require.main === module) {
       assert.ifError(err);
       echoServer.start();
   });
+  console.log('Server is up');
 }
 
 exports.getServer = getServer;

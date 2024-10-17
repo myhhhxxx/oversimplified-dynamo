@@ -14,7 +14,7 @@
 
 FROM envoyproxy/envoy:v1.22.0
 
-COPY net/grpc/gateway/examples/dynamo/dynamo.yaml /etc/envoy/envoy.yaml
+COPY net/grpc/gateway/examples/dynamo/envoy.yaml /etc/envoy/envoy.yaml
 
 ENTRYPOINT [ "/usr/local/bin/envoy" ]
 CMD [ "-c /etc/envoy/envoy.yaml", "-l trace", "--log-path /tmp/envoy_info.log" ]
